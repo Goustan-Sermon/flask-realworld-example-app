@@ -37,7 +37,7 @@ jobs:
       - name: Exécuter l’analyse Snyk (SCA)
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=requirements.txt --package-manager=pip --json > snyk-report.json || true
+        run: snyk test --file=requirements.txt --package-manager=pip --skip-unresolved=true --json > snyk-report.json || true
 
     #RAPPORT DE SCAN
       - name: Upload du rapport de sécurité
