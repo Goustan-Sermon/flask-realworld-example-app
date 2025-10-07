@@ -27,13 +27,16 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: Generer global requirements.txt
+        run: cat requirements/*.txt > requirements.txt
+
       - name: Install Snyk
         run: npm install -g snyk
 
       - name: Run Snyk test (dependency scan)
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --json > snyk-report.json || true
+        run: snyk test --file=requirements.txt --json > snyk-report.json || true
         
       - name: Upload security reports
         uses: actions/upload-artifact@v4
