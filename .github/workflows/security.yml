@@ -3,45 +3,45 @@ on:
   push:
     branches:
       - master
-  pull_request :
+  pull_request:
     branches:
       - master
-      
+
 jobs:
-  Security :
+  securite:
     runs-on: ubuntu-latest
+
     steps:
+    #SETUP
       - name: Checkout du code
-        uses: actions/checkout@v2
-        
-      - name: Installation des dépendances dev
-        run:
-          pip install --upgrade pip
-          pip install -r requirements/dev.txt || true
-          
-      - name: Installation des dépendances prod
-        run: pip install -r requirements/prod.txt || true
-        
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Generer global requirements.txt
+      - name: Met à jour pip
+        run: pip install --upgrade pip
+
+      - name: Générer global requirements.txt
         run: cat requirements/*.txt > requirements.txt
 
-      - name: Install Snyk
+      - name: Installer les dépendances à partir du requirements global
+        run: pip install -r requirements.txt || true
+        
+    #SCAN DES DEPENDANCES
+      - name: Installer Snyk
         run: npm install -g snyk
 
-      - name: Run Snyk test (dependency scan)
+      - name: Exécuter l’analyse Snyk (SCA)
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk test --file=requirements.txt --package-manager=pip --json > snyk-report.json || true
-        
-      - name: Upload security reports
+
+    #RAPPORT DE SCAN
+      - name: Upload du rapport de sécurité
         uses: actions/upload-artifact@v4
         with:
-          name: security-reports
-          path: |
-            snyk-report.json
-
+          name: snyk-security-report
+          path: snyk-report.json
