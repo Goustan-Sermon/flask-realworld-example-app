@@ -8,11 +8,15 @@ on:
       - master
       
 jobs:
-  build:
+  Security :
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
         uses: actions/checkout@v2
+      - name: Installation des dépendances dev
+        run: pip install -r requirements/dev.txt
+      - name: Installation des dépendances prod
+        run: pip install -r requirements/prod.txt
       - name: Archive des résultats de tests
         uses: actions/upload-artifact@v4
         with:
