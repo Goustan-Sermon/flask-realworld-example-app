@@ -17,8 +17,12 @@ jobs:
         run: pip install -r requirements/dev.txt
       - name: Installation des dépendances prod
         run: pip install -r requirements/prod.txt
-      - name: Archive des résultats de tests
-        uses: actions/upload-artifact@v4
+
+      - name: SCA - Dependency analysis (Snyk)
+        uses: snyk/actions/python@master        
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          name: test-results
-          path: test-results
+          command: test
+        continue-on-error: true
+
